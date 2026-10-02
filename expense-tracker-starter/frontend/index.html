@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container">
+    <span class="navbar-brand mb-0 h1">Expense Tracker</span>
+  </div>
+</nav>
+
+<main class="container py-4">
+<div id="alertContainer"></div>
+
+
+<div class="summary-grid mb-4">
+  <div>
+    <div class="card summary-card">
+      <div class="card-body">
+        <h6 class="text-muted">Total Expenses</h6>
+        <h3 id="totalAmount">0.00 JD</h3>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div>
+    <div class="card summary-card">
+      <div class="card-body">
+        <h6 class="text-muted">Number of Expenses</h6>
+        <h3 id="expenseCount">0</h3>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="card summary-card">
+      <div class="card-body">
+        <h6 class="text-muted">Highest Expense</h6>
+        <h3 id="highestAmount">0.00 JD</h3>
+      </div>
+    </div>
+  </div>
+ </div>
+
+ <div class="card mb-4">
+  <div class="card-body">
+    <h4 class="mb-3">Add Expense</h4>
+    <form id="expenseForm novalidate">
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <label for="title" class="form-label">Title</label>
+          <input type="text" id="title" class="form-control" placeholder="Examply: Lunch">
+          <div id="titleError" class="text-danger small mt-1"></div>
+        </div>
+        <div class="col-12 col-md-6">
+          <label for="amount" class="form-label">Amount</label>
+          <input type="number" id="amount" class="form-control" step="0.01" min="0.01" placeholder="Example.4.50 JD">
+          <div id="amountError" class="text-danger smaill mt-1"></div>
+        </div>
+        <div clas="col-12 col-md-6">
+          <label for="category" class="form-label">Category</label>
+          <select id="category" class="form-select">
+            <option value="">Choose category</option>
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Bills">Bills</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Other">Other</option>
+          </select>
+          <div id="categoryError" class="text-danger small mt-1"></div>
+        </div>
+
+       <div class="col-12 col-md-6">
+        <label for="date" class="form-label">Date</label>
+        <input type="date" id="date" class="form-control">
+        <div id="dateError" class="text-danger small mt-1"></div>
+       </div>           
+      </div>
+
+      <button type="submit" class="btn btn-primary mt-3">Add Expense</button>      
+    </form>
+  </div>
+ </div>
+
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex flex-column flex-md-row justify-content-between
+     align-items-md-center gap-3 mb-3">
+    <h4 class="mb-0">Expenses</h4>
+    <select id="filterCategory" class="form-select filter-select">
+      <option value="All">All</option>
+      <option value="Food">Food</option>
+      <option value="Transport">Transport</option>
+      <option value="Bills">Bills</option>
+      <option value="Entertainment">Entertainment</option>
+      <option value="Other">Other</option>
+    </select>
+    </div>
+<div id="loadingSpinner" class="text-center py-4 d-none">
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <p class="mt-2">Loading expenses...</p>
+</div>
+
+<div class="table-respnsive">
+  <table class="table table-hover align-middle">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Amount</th>
+        <th>Category</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+<tbody id="expenseTableBody"></tbody>
+  </table>
+</div>
+  </div>
+</div>
+</main>
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class modal-title>
+          <h5 class="modal-title">Edit Expense</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editForm">
+            <input type="hidden" id="editId">
+            <div class="mb-3">
+              <label for="editTitle" class="form-label">Title</label>
+              <input type="text" id="editTitle" class="form-control">
+              <div id="editTitleError" class="text-danger small mt-1"></div>
+            </div>
+            <div class="mb-3">
+              <label for="editAmount" class="form-label">Amount</label>
+              <input type="number" id="editAmount" class="form-control" step="0.01" min="0.01">
+              <div id="editAmountError" class="text-danger small mt-1"></div>
+            </div>
+            <div class="mb-3">
+              <label for="editCategory" class="form-label">Category</label>
+              <select  id="editCategory" class="form-select">
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Bills">Bills</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="editDate" class="form-label">Date</label>
+              <input type="date" id="editDate" class="form-control">
+              <div id="editDateError" class="text-danger small mt-1"></div>
+            </div>  
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
